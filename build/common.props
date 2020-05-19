@@ -1,0 +1,11 @@
+<Project>
+    <Import Project="version.props" />
+    <PropertyGroup>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>pauldotknopf</Authors>
+        <PackageDescription>Helper interfaces and attributes to make working with dependency injection a tad-bit easier.</PackageDescription>
+        <Summary>Helper interfaces and attributes to make working with dependency injection a tad-bit easier.</Summary>
+        <RepositoryUrl>https://github.com/pauldotknopf/sharp-registration</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/pauldotknopf/sharp-registration</PackageProjectUrl>
+    </PropertyGroup>
+</Project>
