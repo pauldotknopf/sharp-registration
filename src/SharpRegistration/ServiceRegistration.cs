@@ -41,7 +41,7 @@ namespace SharpRegistration
                     attribute.Lifetime)
                 : new ServiceDescriptor(serviceType, declaredType, attribute.Lifetime));
 
-            return new ServiceRegistrationResult(serviceType, declaredType, ServiceLifetime.Scoped);
+            return new ServiceRegistrationResult(serviceType, declaredType, attribute.Lifetime);
         }
     }
 }
