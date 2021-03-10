@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace SharpRegistration
@@ -21,24 +22,27 @@ namespace SharpRegistration
             return Provider.GetRequiredService(type);
         }
 
-        public static void Register(params IRegistrar[] registrars)
+        public static void Register(IConfiguration configuration, params IRegistrar[] registrars)
         {
             lock (Lock)
             {
                 if (Provider != null)
                     return;
 
-                Provider = Build(registrars.ToArray());
+                Provider = Build(null, configuration, registrars.ToArray());
             }
         }
 
-        public static IServiceProvider Build(params IRegistrar[] registrars)
+        public static IServiceProvider Build(IServiceCollection services, IConfiguration configuration, params IRegistrar[] registrars)
         {
-            var services = new ServiceCollection();
+            if (services == null)
+            {
+                services = new ServiceCollection();
+            }
 
             foreach (var registrar in registrars.OrderBy(x => x.Order))
             {
-                registrar.Register(services);
+                registrar.Register(services, configuration);
             }
                 
             return services.BuildServiceProvider();
@@ -61,9 +65,9 @@ namespace SharpRegistration
 
             public int Order { get; }
 
-            public void Register(IServiceCollection serviceCollection)
+            public void Register(IServiceCollection services, IConfiguration configuration)
             {
-                _action(serviceCollection);
+                _action(services);
             }
         }
 
