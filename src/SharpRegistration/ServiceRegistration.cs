@@ -6,24 +6,6 @@ namespace SharpRegistration
 {
     internal static class ServiceRegistration
     {
-        public static void RegisterAllTypes(IServiceCollection services, Assembly assembly = null)
-        {
-            if (assembly == null)
-            {
-                assembly = Assembly.GetCallingAssembly();
-            }
-            
-            foreach (var type in assembly.GetTypes())
-            {
-                if (!type.IsClass || type.IsAbstract)
-                {
-                    continue;
-                }
-
-                RegistrationContext.TryRegisterService(type, services);
-            }
-        }
-        
         public static ServiceRegistrationResult Register(IServiceCollection services, ServiceAttribute attribute, Type declaredType, ServiceBuilderDelegate instantiate = null)
         {
             if (declaredType == null)
