@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -71,27 +72,59 @@ namespace SharpRegistration
             }
         }
 
+        public static List<ServiceRegistrationResult> TryRegisterAllServices(IServiceCollection services, Assembly assembly = null)
+        {
+            if (assembly == null)
+            {
+                assembly = Assembly.GetCallingAssembly();
+            }
+
+            List<ServiceRegistrationResult> result = null;
+            
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!type.IsClass || type.IsAbstract)
+                {
+                    continue;
+                }
+
+                var r = TryRegisterService(type, services);
+                if (r != null)
+                {
+                    if (result == null)
+                    {
+                        result = new List<ServiceRegistrationResult>();
+                    }
+                    result.AddRange(r);
+                }
+            }
+
+            return result;
+        }
+        
         public static List<ServiceRegistrationResult> TryRegisterService(Type type, IServiceCollection services, ServiceBuilderDelegate instantiate = null)
         {
+            List<ServiceRegistrationResult> result = null;
+            
             if (!type.IsClass || type.IsAbstract)
             {
-                return null;
+                return result;
             }
 
             var serviceAttributes = type.GetCustomAttributes(typeof(ServiceAttribute), false)
                 .OfType<ServiceAttribute>().ToList();
-            List<ServiceRegistrationResult> results = null;
-            
+
             foreach (var serviceAttribute in serviceAttributes)
             {
-                if (results == null)
+                if (result == null)
                 {
-                    results = new List<ServiceRegistrationResult>();
+                    result = new List<ServiceRegistrationResult>();
                 }
-                results.Add(ServiceRegistration.Register(services, serviceAttribute, type, instantiate));
+
+                result.Add(ServiceRegistration.Register(services, serviceAttribute, type, instantiate));
             }
 
-            return results;
+            return result;
         }
     }
 }
