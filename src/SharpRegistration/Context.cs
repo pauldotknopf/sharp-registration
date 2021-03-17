@@ -72,7 +72,7 @@ namespace SharpRegistration
             }
         }
 
-        public static List<ServiceRegistrationResult> TryRegisterAllServices(IServiceCollection services, Assembly assembly = null)
+        public static List<ServiceRegistrationResult> TryRegisterAllServices(this IServiceCollection services, Assembly assembly = null)
         {
             if (assembly == null)
             {
@@ -88,7 +88,7 @@ namespace SharpRegistration
                     continue;
                 }
 
-                var r = TryRegisterService(type, services);
+                var r = services.TryRegisterService(type);
                 if (r != null)
                 {
                     if (result == null)
@@ -102,7 +102,7 @@ namespace SharpRegistration
             return result;
         }
         
-        public static List<ServiceRegistrationResult> TryRegisterService(Type type, IServiceCollection services, ServiceBuilderDelegate instantiate = null)
+        public static List<ServiceRegistrationResult> TryRegisterService(this IServiceCollection services, Type type, ServiceBuilderDelegate instantiate = null)
         {
             List<ServiceRegistrationResult> result = null;
             
